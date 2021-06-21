@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import NCMB
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,7 +15,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        NCMB.setApplicationKey("ac7a0d13d7eb1c4dc27a5f8ea1ca8a7eb68e3fc8578c9915766590b1e74603fb", clientKey: "3ed4e02391d31162a83168de0a8b4f1c8647e130d29648b63aaadf3b9f9c6aed")
+        
+        sleep(2) // <<<<<<<<<<<< 追加
+        
+        let ud = UserDefaults.standard
+        if ud.object(forKey: "userName") == nil {
+            NCMBUser.enableAutomaticUser()
+            NCMBUser.automaticCurrentUser { (user, error) in
+                if error != nil {
+                    print(error)
+                } else {
+                    ud.set(user?.objectId, forKey: "userName")
+                    print(ud.object(forKey: "userName"))
+                     let groupACL = NCMBACL()
+                    groupACL.setPublicReadAccess(true)
+                    user!.acl = groupACL
+                    user!.save(nil)
+                }
+            }
+        }
+        
+        
+        
         return true
     }
 
